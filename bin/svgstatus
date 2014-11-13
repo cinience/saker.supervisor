@@ -1,0 +1,8 @@
+#!/bin/sh
+ScriptDir=`echo $(cd "$(dirname "$0")"; pwd)`
+. ${ScriptDir}/common
+
+inner_exceute svgstatus $*
+
+
+

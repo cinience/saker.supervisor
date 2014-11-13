@@ -1,0 +1,13 @@
+#!/bin/sh
+
+PrettyBin=${ScriptDir}/jq
+Client=${ScriptDir}/saker-cli
+
+pidof saker > /dev/null 2>&1 || { echo "saker is not running"; exit 1; }
+
+inner_exceute()
+{
+    ${Client} -p 12007 $* | ${PrettyBin} .
+}
+
+

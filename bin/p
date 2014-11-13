@@ -1,0 +1,54 @@
+#!/bin/sh
+ScriptDir=`echo $(cd "$(dirname "$0")"; pwd)`
+. ${ScriptDir}/common
+
+TMPFILE=`mktemp`
+${ScriptDir}/svstatus $* > ${TMPFILE}
+
+if [ $? -ne 0 ]; then
+    echo "Communication failure"
+    rm -rf $TMPFILE
+    exit 1
+fi
+
+${PrettyBin} . ${TMPFILE} > /dev/null 2>&1 
+if [ $? -ne 0 ]; then
+    echo "The result is not recognized"
+    rm -rf $TMPFILE
+    exit 1
+fi
+
+KEY="NAME"
+PID="PID"
+STATUS="STATUS"
+UPTIME="UPTIME"
+MEM="%MEM"
+CPU="%CPU"
+
+i=0
+while true
+do
+    if [[ $i -eq 0 ]] ;then
+        printf "\e[33m%-20s %-10s %-10s %-10s %-10s %-10s\e[0m\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${MEM} ${CPU}
+    fi
+    KEY=`$PrettyBin "keys | .[$i]" ${TMPFILE} | tr -d "\""`
+    if [[ $KEY = "null" ]] ;then
+       break
+    fi
+
+    PID=`$PrettyBin ".${KEY}.PID" ${TMPFILE} | tr -d "\""`
+    STATUS=`$PrettyBin ".${KEY}.STATUS" ${TMPFILE} | tr -d "\""`
+    UPTIME=`$PrettyBin ".${KEY}.UPTIME" ${TMPFILE} | tr -d "\""`
+    MEM=`$PrettyBin ".${KEY}.MEM" ${TMPFILE} | tr -d "\""`
+    CPU=`$PrettyBin ".${KEY}.CPU" ${TMPFILE} | tr -d "\""`
+    if [ "X${STATUS}" == "XAbnormal" ] ;then
+        printf "%-20s %-10s \e[31m%-10s\e[0m %-10s %-10s %-10s\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${MEM} ${CPU}
+    else 
+        printf "%-20s %-10s %-10s %-10s %-10s %-10s\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${MEM} ${CPU}
+    fi
+    
+    i=`expr $i + 1`
+done
+
+rm -f ${TMPFILE}
+
