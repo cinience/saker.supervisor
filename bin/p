@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ScriptDir=`echo $(cd "$(dirname "$0")"; pwd)`
 . ${ScriptDir}/common
 
@@ -22,6 +22,7 @@ KEY="NAME"
 PID="PID"
 STATUS="STATUS"
 UPTIME="UPTIME"
+RSS="RSS"
 MEM="%MEM"
 CPU="%CPU"
 
@@ -29,7 +30,7 @@ i=0
 while true
 do
     if [[ $i -eq 0 ]] ;then
-        printf "\e[33m%-20s %-10s %-10s %-10s %-10s %-10s\e[0m\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${MEM} ${CPU}
+        printf "\e[33m%-20s %-10s %-10s %-10s %-10s %-10s %-10s\e[0m\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${RSS} ${MEM} ${CPU}
     fi
     KEY=`$PrettyBin "keys | .[$i]" ${TMPFILE} | tr -d "\""`
     if [[ $KEY = "null" ]] ;then
@@ -39,12 +40,13 @@ do
     PID=`$PrettyBin ".${KEY}.PID" ${TMPFILE} | tr -d "\""`
     STATUS=`$PrettyBin ".${KEY}.STATUS" ${TMPFILE} | tr -d "\""`
     UPTIME=`$PrettyBin ".${KEY}.UPTIME" ${TMPFILE} | tr -d "\""`
-    MEM=`$PrettyBin ".${KEY}.MEM" ${TMPFILE} | tr -d "\""`
-    CPU=`$PrettyBin ".${KEY}.CPU" ${TMPFILE} | tr -d "\""`
+    RSS=`$PrettyBin ".${KEY}.RSS" ${TMPFILE} | tr -d "\""`
+    MEM=`$PrettyBin ".${KEY}.PMEM" ${TMPFILE} | tr -d "\""`
+    CPU=`$PrettyBin ".${KEY}.PCPU" ${TMPFILE} | tr -d "\""`
     if [ "X${STATUS}" == "XAbnormal" ] ;then
-        printf "%-20s %-10s \e[31m%-10s\e[0m %-10s %-10s %-10s\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${MEM} ${CPU}
+        printf "%-20s %-10s \e[31m%-10s\e[0m %-10s %-10s %-10s %-10s\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${RSS} ${MEM} ${CPU}
     else 
-        printf "%-20s %-10s %-10s %-10s %-10s %-10s\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${MEM} ${CPU}
+        printf "%-20s %-10s %-10s %-10s %-10s %-10s %-10s\n" ${KEY} ${PID} ${STATUS} ${UPTIME} ${RSS} ${MEM} ${CPU}
     fi
     
     i=`expr $i + 1`

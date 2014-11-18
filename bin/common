@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PrettyBin=${ScriptDir}/jq
 Client=${ScriptDir}/saker-cli
