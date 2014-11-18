@@ -1,0 +1,18 @@
+#!/bin/bash
+ScriptDir=`echo $(cd "$(dirname "$0")"; pwd)`
+. ${ScriptDir}/common
+
+TMPFILE=`mktemp`
+
+${ScriptDir}/p
+while [ 1 ]    
+do
+    ${ScriptDir}/p > ${TMPFILE}
+    line=`cat ${TMPFILE} | wc -l`
+    echo -ne "\e[${line}A\e[K"
+    cat ${TMPFILE}
+    sleep 2
+done
+
+rm -f ${TMPFILE}
+
