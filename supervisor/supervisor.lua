@@ -603,7 +603,7 @@ function svinfo_add(sname, a)
     end
 
     local maxidx = Modulelife[sname.."idx"]
-    if maxidx > 1000 then
+    if maxidx > 100 then
         table.remove(Modulelife[sname], 1)
     end
     maxidx = maxidx + 1
